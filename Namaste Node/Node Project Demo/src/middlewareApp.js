@@ -1,5 +1,6 @@
 const express = require('express');
 const {adminAuth} = require('./middleware/auth')
+const {userAuth} = require('./middleware/userAuth')
 const app = express();
 
 //MiddleWare which only works for api starting with /admin
@@ -26,6 +27,11 @@ app.get('/admin/deleteUser', (req,res) => {
     //Then check if its a admin
     //Logic of fetching all data
     res.send("Delete")
+})
+
+//we can write middleware like this as well
+app.get('/user/getDetais',userAuth,(req,res)=>{
+    res.send("Data sent SucessFully for User");
 })
 
 app.listen(3000,()=>{
