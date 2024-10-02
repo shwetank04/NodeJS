@@ -12,7 +12,7 @@ app.get("/getUserData",(req,res)=>{
     }
 })
 
-//Here the err should be the first parameter. 
+//Here the err should be the first parameter and should be at the end so that if any error occurs at top can come here
 app.use("/",(err,req,res,next)=> {
     if(err){
         console.error(err.message);
