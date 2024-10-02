@@ -16,6 +16,7 @@ const app = express();
 //next lines of code and goes to second route handler and console log will be printed but code will throw error as we are tryig to send other response 
 //in the same url.
 //We can put array of request handler as well.
+//The middle functions are called as middleware and the one which sends the response back is called request handler.
 app.use('/test2',[(req,res,next)=>{
     console.log("Handling the route user1");
     // res.send("Response");
