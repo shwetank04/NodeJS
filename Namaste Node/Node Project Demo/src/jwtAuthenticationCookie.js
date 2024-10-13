@@ -6,7 +6,6 @@ const validateSignUpData = require('./utils/validation')
 const bcrypt = require('bcrypt');
 const validator = require('validator');
 const cookieParser = require('cookie-parser');
-const jwt = require("jsonwebtoken");
 const {tokenAuth} = require('./middleware/auth')
 
 //Middleware for reading JSON request for all incoming request
@@ -23,11 +22,11 @@ app.post("/login",async (req,res)=>{
         if(!user) {
             throw new Error("No user found for this email");
         }
-        const isPasswordValid = await bcrypt.compare(password,user.password);
+        const isPasswordValid = await user.validatePassword(password);
         if(isPasswordValid){
         //create JWT Token
         //we are hiding the userId in jwt and then giving secreat key in second argument
-        const token = await jwt.sign({_id:user._id},"NODEPROJECT$790",{expiresIn : "1d"});
+        const token = await user.getJWT();
         console.log(token);
         //Add the token to cookie and send the response back to user.
             res.cookie("token",token,{expiresIn : "1d"});
