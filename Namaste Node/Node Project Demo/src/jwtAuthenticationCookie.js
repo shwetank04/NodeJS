@@ -88,4 +88,3 @@ connectDb().then(() =>{
 .catch((err) => {
     console.log("Error in connecting to DB "+err)
 });
-
