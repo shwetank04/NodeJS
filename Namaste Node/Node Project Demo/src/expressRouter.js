@@ -4,6 +4,7 @@ const authRouter = require('./routes/auth');
 const profileRouter = require('./routes/profile');
 const requestRouter = require('./routes/request');
 const cookieParser = require('cookie-parser');
+const userRouter = require('./routes/user');
 const app = express();
 
 //Middleware for reading JSON request for all incoming request
@@ -14,6 +15,7 @@ app.use(cookieParser());
 app.use('/',authRouter);
 app.use('/',profileRouter);
 app.use('/',requestRouter);
+app.use('/',userRouter);
 
 
 //Connecting to db and then only starting the application
