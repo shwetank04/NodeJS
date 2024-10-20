@@ -3,7 +3,9 @@ const mongoose = require("mongoose");
 const connectionRequestSchema = new mongoose.Schema({
     fromUserId:{
         type: mongoose.Schema.Types.ObjectId,
-        required:true
+        required:true,
+        //This is reference to user collection.Creating a link between two collections.
+        ref: "User"
     },
     toUserId:{
         type: mongoose.Schema.Types.ObjectId,
