@@ -47,4 +47,37 @@ requestRouter.post("/request/send/:status/:toUserId",tokenAuth, async (req,res) 
     }
 });
 
+requestRouter.post("/request/review/:status/:requestId",tokenAuth, async(req,res) => {
+    try{
+        const status = req.params.status;
+        const loggedInUser = req.user;
+        const requestId = req.params.requestId;
+        // Garp => Luffy, so luffy is on receiving end and he should be the logged in user to accept it which is toUserId
+        //The status should be in interested state. Request Id should be valid.
+        const allowedStatus = ["accepted","rejected"];
+        if(!allowedStatus.includes(status)) {
+            throw new Error(status +"Status not allowed");
+        }
+
+        const connectionRequest = await ConnectionRequest.findOne({
+            _id:requestId,
+            toUserId: loggedInUser._id,
+            status: "interested"
+        })
+
+        if(!connectionRequest){
+            throw new Error("Connection Request not found");
+        }
+
+        connectionRequest.status = status;
+        const data = await connectionRequest.save();
+
+        res.json({message: "Connection request "+status, data});
+
+    }
+    catch(e){
+        res.status(500).send(e.message);
+    }
+})
+
 module.exports = requestRouter;
