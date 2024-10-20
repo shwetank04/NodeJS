@@ -25,7 +25,7 @@ const connectionRequestSchema = new mongoose.Schema({
 connectionRequestSchema.index({fromUserId: 1, toUserId: 1});
 
 //This will be called everytime connection request is saved. i.e whenever we are saving a connection request
-connectionRequestSchema.pre("save", function() {
+connectionRequestSchema.pre("save", function(next) {
     const connectionRequest = this;
     //check if fromUserId is same as toUserId
     if(connectionRequest.fromUserId.equals(connectionRequest.toUserId)) {
