@@ -2,6 +2,7 @@ const express = require('express');
 const userRouter = express.Router();
 const {tokenAuth} = require('../middleware/auth');
 const ConnectionRequest = require('../models/connectionRequest');
+const User = require('../models/user');
 
 //Get all the pending connection request for logged in user
 userRouter.get('/user/requests/received',tokenAuth, async(req,res) => {
@@ -36,6 +37,42 @@ userRouter.get('/user/connections',tokenAuth,async(req,res)=>{
     }
     catch(e){
         res.status(500).send(e.message);
+    }
+})
+
+userRouter.get("/user/feed",tokenAuth, async(req,res) =>{
+    try{
+        //The user should see all the cards but avoid certain cards except his own card, his connections, ignored profile
+        //already sent connection request to.
+        const pageNo = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const loggedInUser = req.user;
+        //Find all the connection request which i have sent or received.
+        const connectionRequest = await ConnectionRequest.find({
+            $or : [
+                {fromUserId : loggedInUser._id},
+                {toUserId: loggedInUser._id}
+            ]
+        }).select("fromUserId toUserId");
+
+        const hideUserFromFeed = new Set();
+        connectionRequest.forEach((req) => {
+            hideUserFromFeed.add(req.fromUserId.toString());
+            hideUserFromFeed.add(req.toUserId.toString());
+        });
+        console.log(hideUserFromFeed);
+
+        const users = await User.find({
+            $and: [
+               { _id: { $nin: Array.from(hideUserFromFeed) } },
+               { _id: { $ne : loggedInUser._id} },
+            ],
+        }).skip((pageNo -1 * limit)).limit(limit);
+
+        res.send(users);
+    }
+    catch(e){
+        res.status(400).send(e.message);
     }
 })
 
